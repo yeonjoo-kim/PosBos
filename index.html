@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Piece or Background</title>
+    <style>
+        /* 시스템 컬러 및 타이포그래피 변수 */
+        :root {
+            --bg-color: #E2FFDA;
+            --outline-color: #D9D9D9;
+            --sub-color: #D7FFF9;
+            --text-main: #222222;
+            --text-sub: #777777;
+            --border-width: 2pt;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            font-family: 'Helvetica Neue', Helvetica, 'Noto Sans KR', 'Noto Sans JP', 'Noto Sans', sans-serif;
+            color: var(--text-main);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            padding: 20px;
+            box-sizing: border-box;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 480px;
+            display: flex;
+            flex-direction: column;
+            gap: 40px;
+        }
+
+        .envelope-graphic {
+            width: 100%;
+            height: auto;
+            stroke: var(--outline-color);
+            stroke-width: var(--border-width);
+            fill: var(--bg-color);
+        }
+
+        .instruction {
+            text-align: center;
+            margin-bottom: 24px;
+        }
+        .instruction p {
+            margin: 4px 0;
+            line-height: 1.5;
+        }
+        .lang-kr { font-size: 16px; font-weight: bold; }
+        .lang-en { font-size: 14px; color: var(--text-sub); }
+        .lang-jp { font-size: 14px; color: var(--text-sub); }
+
+        .form-group {
+            margin-bottom: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+        
+        input[type="text"], input[type="email"], textarea {
+            width: 100%;
+            padding: 16px;
+            background-color: transparent;
+            border: var(--border-width) solid var(--outline-color);
+            border-radius: 0;
+            font-family: inherit;
+            font-size: 16px;
+            box-sizing: border-box;
+            transition: background-color 0.3s ease;
+            resize: none;
+        }
+
+        input[type="text"]:focus, input[type="email"]:focus, textarea:focus {
+            outline: none;
+            background-color: var(--sub-color);
+        }
+
+        .checkbox-group {
+            margin-bottom: 20px;
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            cursor: pointer;
+            text-align: left;
+        }
+        
+        .checkbox-group input[type="checkbox"] {
+            width: 20px;
+            height: 20px;
+            margin: 2px 0 0 0;
+            cursor: pointer;
+            accent-color: var(--text-sub);
+            flex-shrink: 0;
+        }
+        
+        .checkbox-text p {
+            margin: 0 0 4px 0;
+        }
+
+        button {
+            width: 100%;
+            padding: 16px;
+            background-color: transparent;
+            border: var(--border-width) solid var(--outline-color);
+            color: var(--text-main);
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-top: 10px;
+        }
+
+        button:hover {
+            background-color: var(--outline-color);
+        }
+
+        /* 결과 화면의 편지지 스타일 */
+        .letter-paper {
+            background-color: #FFFFFF;
+            border: var(--border-width) solid var(--outline-color);
+            padding: 32px;
+            min-height: 200px;
+            line-height: 1.6;
+            font-size: 16px;
+        }
+
+        .hidden { display: none !important; }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <svg class="envelope-graphic" viewBox="0 0 400 240" xmlns="http://www.w3.org/2000/svg">
+            <rect x="2" y="2" width="396" height="236" />
+            <polyline points="2,2 200,140 398,2" fill="none" />
+            <polyline points="2,238 150,110" fill="none" />
+            <polyline points="398,238 250,110" fill="none" />
+        </svg>
+
+        <div id="step-code">
+            <div class="instruction">
+                <p class="lang-kr">당신이 구매한 Piece or Background에 적힌 코드를 입력하세요.</p>
+                <p class="lang-en">Please enter the code written on your Piece or Background.</p>
+                <p class="lang-jp">ご購入いただいたPieceまたはBackgroundに記載されているコードを入力してください。</p>
+            </div>
+            <div class="form-group">
+                <input type="text" id="input-code" placeholder="Code (e.g., PoS1@p&b)" autocomplete="off">
+            </div>
+            <button onclick="goToNextStep()">Next</button>
+        </div>
+
+        <div id="step-message" class="hidden">
+            <div class="instruction">
+                <p class="lang-kr">당신의 짝에게 남기고 싶은 메세지 (필수)</p>
+                <p class="lang-en">Message for your partner (Required)</p>
+                <p class="lang-jp">ペアに残したいメッセージ (必須)</p>
+            </div>
+            <div class="form-group">
+                <textarea id="input-message" rows="4" placeholder="Your message..."></textarea>
+            </div>
+
+            <div class="instruction" style="margin-top: 30px;">
+                <p class="lang-kr">이메일 (필수)</p>
+                <p class="lang-en">Email (Required)</p>
+                <p class="lang-jp">メールアドレス (必須)</p>
+            </div>
+            <div class="form-group">
+                <input type="email" id="input-email" placeholder="Email address">
+            </div>
+            
+            <label class="checkbox-group">
+                <input type="checkbox" id="check-share-email" checked>
+                <div class="checkbox-text">
+                    <p class="lang-kr">메세지와 함께 이메일 정보를 주겠습니까?</p>
+                    <p class="lang-en">Would you like to share your email with the message?</p>
+                    <p class="lang-jp">メッセージと一緒にメールアドレスを共有しますか？</p>
+                </div>
+            </label>
+            
+            <button onclick="submitData()">Submit</button>
+        </div>
+
+        <div id="step-waiting" class="hidden">
+            <div class="instruction" style="margin-top: 40px;">
+                <p class="lang-kr">아직 상대방이 메세지를 남기기 전입니다.<br>상대방이 메세지를 남겼을 경우 이메일이 전송이 됩니다.</p>
+                <p class="lang-en">Your partner hasn't left a message yet.<br>We will send you an email when they do.</p>
+                <p class="lang-jp">まだペアがメッセージを残していません。<br>メッセージが残された場合、メールでお知らせします。</p>
+            </div>
+        </div>
+
+        <div id="step-result" class="hidden">
+            <div class="instruction">
+                <p class="lang-kr">당신의 짝꿍이 남긴 메세지입니다.</p>
+                <p class="lang-en">A message from your partner.</p>
+                <p class="lang-jp">ペアからのメッセージです。</p>
+            </div>
+            <div class="letter-paper" id="partner-message-display">
+                </div>
+            <div class="instruction" style="margin-top: 20px;" id="partner-email-display">
+                </div>
+        </div>
+
+    </div>
+
+    <script>
+        function goToNextStep() {
+            const codeInput = document.getElementById('input-code').value.trim();
+            if(!codeInput) {
+                alert("코드를 입력해 주세요.\nPlease enter the code.\nコードを入力してください。");
+                return;
+            }
+            document.getElementById('step-code').classList.add('hidden');
+            document.getElementById('step-message').classList.remove('hidden');
+        }
+
+        function submitData() {
+            const codeInput = document.getElementById('input-code').value.trim();
+            const messageInput = document.getElementById('input-message').value.trim();
+            const emailInput = document.getElementById('input-email').value.trim();
+            const shareEmail = document.getElementById('check-share-email').checked; // 체크박스 상태 (true/false)
+
+            if(!messageInput || !emailInput) {
+                alert("메시지와 이메일은 필수 입력 사항입니다.");
+                return;
+            }
+
+            const confirmMsg = `입력하신 이메일이 맞습니까?\nIs this the correct email?\n入力したメールアドレスは正しいですか？\n\n[ ${emailInput} ]\n\n확인(OK)을 누르시면 제출됩니다.`;
+            
+            if(confirm(confirmMsg)) {
+                // 제출 완료 후 메시지 입력창 숨기기
+                document.getElementById('step-message').classList.add('hidden');
+
+                // 🌟 여기에 Make.com에서 복사한 주소를 붙여넣으세요!
+                const webhookUrl = 'https://hook.eu1.make.com/k2hksgex8bb82cv7gi3h0klman1n7dt1';
+
+                // 보낼 데이터 포장하기
+                const data = {
+                    code: codeInput,
+                    message: messageInput,
+                    email: emailInput,
+                    shareEmail: shareEmail
+                };
+
+                // Make.com으로 데이터 전송 (Fetch API)
+                fetch(webhookUrl, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(data)
+                })
+                .then(response => {
+                    // 데이터 전송 성공 시 일단 대기 화면을 보여줍니다.
+                    document.getElementById('step-waiting').classList.remove('hidden');
+                    console.log("Make.com으로 전송 성공!");
+                })
+                .catch(error => {
+                    alert("통신 중 오류가 발생했습니다.");
+                    console.error('Error:', error);
+                });
+            }
+        }
+    </script>
+</body>
+</html>
