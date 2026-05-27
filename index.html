@@ -208,8 +208,58 @@
 
     </div>
 
-<script>
-    // Make.com 웹훅 주소 (기존 주소 그대로 사용)
+    <script>
+        // 1. 유효한 코드 목록 (방어 로직)
+        const validCodes = [
+            'PoS1@p&b', 'BoS1@p&b',
+            'PoS2@p&b', 'BoS2@p&b',
+            'PoS3@p&b', 'BoS3@p&b'
+        ];
+
+        // 2. Next 버튼을 눌렀을 때 작동하는 함수
+        function goToNextStep() {
+            const codeInput = document.getElementById('input-code').value.trim();
+            
+            if(!codeInput) {
+                alert("코드를 입력해 주세요.\nPlease enter the code.\nコードを入力してください。");
+                return;
+            }
+
+            if(!validCodes.includes(codeInput)) {
+                alert("존재하지 않는 코드입니다. 오타가 없는지 확인해 주세요.\nInvalid code. Please check again.\n無効なコードです。もう一度確認してください。");
+                return;
+            }
+            
+            document.getElementById('step-code').classList.add('hidden');
+            document.getElementById('step-message').classList.remove('hidden');
+        }
+
+        // 3. Submit 버튼을 눌렀을 때 작동하는 함수
+        function submitData() {
+            const codeInput = document.getElementById('input-code').value.trim();
+            const messageInput = document.getElementById('input-message').value.trim();
+            const emailInput = document.getElementById('input-email').value.trim();
+            const shareEmail = document.getElementById('check-share-email').checked;
+
+            if(!messageInput || !emailInput) {
+                alert("메시지와 이메일은 필수 입력 사항입니다.");
+                return;
+            }
+
+            const confirmMsg = `입력하신 이메일이 맞습니까?\nIs this the correct email?\n入力したメールアドレスは正しいですか？\n\n[ ${emailInput} ]\n\n확인(OK)을 누르시면 제출됩니다.`;
+            
+            if(confirm(confirmMsg)) {
+                document.getElementById('step-message').classList.add('hidden');
+
+                // 짝꿍 코드 생성
+                let partnerCode = "";
+                if (codeInput.includes("PoS")) {
+                    partnerCode = codeInput.replace("PoS", "BoS");
+                } else if (codeInput.includes("BoS")) {
+                    partnerCode = codeInput.replace("BoS", "PoS");
+                }
+
+                // Make.com 웹훅 주소
                 const webhookUrl = 'https://hook.eu1.make.com/k2hksgex8bb82cv7gi3h0klman1n7dt1';
 
                 const data = {
@@ -226,24 +276,20 @@
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify(data)
                 })
-                .then(response => response.json()) // 🌟 Make.com이 보낸 대답을 해독합니다.
+                .then(response => response.json()) 
                 .then(result => {
                     
                     if (result.status === "success") {
-                        // 짝꿍이 쓴 글이 존재할 때 (결과 화면)
+                        // 짝꿍이 쓴 글이 존재할 때
                         document.getElementById('step-waiting').classList.add('hidden');
                         document.getElementById('step-result').classList.remove('hidden');
                         
-                        // Make.com에서 받아온 진짜 메시지를 화면에 띄워줍니다.
-                        // (지금은 원본 1개만 뜨지만, 다음 단계에서 여기에 번역본 3개가 들어갈 예정입니다!)
                         document.getElementById('partner-message-display').innerHTML = `
                             <div class="msg-group">
                                 <p class="text-kr">${result.message}</p>
                             </div>
                         `;
 
-                        // 이메일 공유 동의 여부에 따라 이메일 표시
-                        // (Make.com에서 넘어올 때 문자로 올 수도 있어서 안전하게 처리)
                         if(result.shareEmail === true || result.shareEmail === "true" || result.shareEmail === "TRUE") {
                             document.getElementById('partner-email-display').innerHTML = `<p class='lang-en'>Partner's Email: ${result.email}</p>`;
                         } else {
@@ -251,7 +297,7 @@
                         }
                         
                     } else {
-                        // 짝꿍이 쓴 글이 아직 없을 때 (대기 화면)
+                        // 짝꿍이 쓴 글이 아직 없을 때
                         document.getElementById('step-waiting').classList.remove('hidden');
                         document.getElementById('step-result').classList.add('hidden');
                     }
@@ -260,6 +306,8 @@
                     alert("통신 중 오류가 발생했습니다.");
                     console.error('Error:', error);
                 });
+            }
+        }
     </script>
 </body>
 </html>
