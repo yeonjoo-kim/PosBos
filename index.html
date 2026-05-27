@@ -221,18 +221,16 @@
 
         const webhookUrl = 'https://hook.eu1.make.com/k2hksgex8bb82cv7gi3h0klman1n7dt1';
 
-        // 🌟 질문 3 해결: 특수문자(&) 자름 현상을 방지하는 강력한 전체 주소 파싱 우회 로직
+     // 🌟 질문 3 완벽 해결: 메일 앱의 특수문자 자름 및 꼬리표 부착을 모두 무시하는 철벽 방어 로직
         window.addEventListener('DOMContentLoaded', () => {
-            let urlCode = "";
-            const codeIndex = window.location.href.indexOf('code=');
-            if (codeIndex !== -1) {
-                // 특정 구분 기호에 잘리지 않도록 code= 뒤의 텍스트 전체를 확보
-                urlCode = window.location.href.substring(codeIndex + 5).split('#')[0];
-                urlCode = decodeURIComponent(urlCode).trim();
-            }
+            // 주소창 전체 텍스트를 가져와서 특수문자 처리를 풀어줍니다.
+            const currentUrl = decodeURIComponent(window.location.href);
             
-            if (urlCode && validCodes.includes(urlCode)) {
-                // 코드가 유효할 경우 입력 단계를 즉시 스킵하고 자동 조회 상태로 진입
+            // 주소창 텍스트 안에 validCodes(우리가 아는 진짜 코드)가 쏙 들어가 있는지 검사합니다.
+            const urlCode = validCodes.find(code => currentUrl.includes(code));
+            
+            if (urlCode) {
+                // 정확한 코드를 발견하면 첫 화면을 가리고 즉시 자동 조회 모드로 진입합니다!
                 document.getElementById('step-code').classList.add('hidden');
                 document.getElementById('step-waiting').classList.remove('hidden');
                 
