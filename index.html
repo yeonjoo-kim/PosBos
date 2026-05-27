@@ -125,9 +125,12 @@
             background-color: #FFFFFF;
             border: var(--border-width) solid var(--outline-color);
             padding: 32px;
-            min-height: 200px;
+            min-height: 220px;
             line-height: 1.6;
             font-size: 16px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between; /* 메시지와 이메일을 상하로 깔끔하게 분할 */
         }
 
         .hidden { display: none !important; }
@@ -175,7 +178,7 @@
             </div>
             
             <label class="checkbox-group">
-                <input type="checkbox" id="check-share-email" checked>
+                <input type="checkbox" id="check-share-email">
                 <div class="checkbox-text">
                     <p class="lang-kr">메세지와 함께 이메일 정보를 주겠습니까?</p>
                     <p class="lang-en">Would you like to share your email with the message?</p>
@@ -190,7 +193,7 @@
             <div class="instruction" style="margin-top: 40px;">
                 <p class="lang-kr">아직 상대방이 메세지를 남기기 전입니다.<br>상대방이 메세지를 남겼을 경우 이메일이 전송이 됩니다.</p>
                 <p class="lang-en">Your partner hasn't left a message yet.<br>We will send you an email when they do.</p>
-                <p class="lang-jp">まだペアがメッセージを残していません。<br>メッセージが残された場合、メールでお知らせします。</p>
+                <p class="lang-jp">まだペアがメッセージを残していません。<br>メッセージ가 남겨졌을 경우 이메일로 알려드립니다.</p>
             </div>
         </div>
 
@@ -200,23 +203,64 @@
                 <p class="lang-en">A message from your partner.</p>
                 <p class="lang-jp">ペアからのメッセージです。</p>
             </div>
-            <div class="letter-paper" id="partner-message-display">
-                </div>
-            <div class="instruction" style="margin-top: 20px;" id="partner-email-display">
-                </div>
+            
+            <div class="letter-paper">
+                <div id="partner-message-display">
+                    </div>
+                <div id="partner-email-display" style="margin-top: 32px; text-align: center; font-size: 14px; color: var(--text-sub);">
+                    </div>
+            </div>
         </div>
 
     </div>
 
     <script>
-        // 1. 유효한 코드 목록
         const validCodes = [
             'PoS1@p&b', 'BoS1@p&b',
             'PoS2@p&b', 'BoS2@p&b',
             'PoS3@p&b', 'BoS3@p&b'
         ];
 
-        // 2. Next 버튼 함수
+        // 🚨 Make.com 웹훅 주소
+        const webhookUrl = 'https://hook.eu1.make.com/k2hksgex8bb82cv7gi3h0klman1n7dt1';
+
+        // 🌟 이메일 링크 접속 시 중간 단계를 통째로 건너뛰는 마법의 자동 조회 시스템
+        window.addEventListener('DOMContentLoaded', () => {
+            const urlParams = new URLSearchParams(window.location.search);
+            const urlCode = urlParams.get('code');
+            
+            if (urlCode && validCodes.includes(urlCode)) {
+                // 링크에 올바른 코드가 있다면 묻지도 따지지도 않고 바로 대기화면을 띄우며 자동 검색 시작
+                document.getElementById('step-code').classList.add('hidden');
+                document.getElementById('step-waiting').classList.remove('hidden');
+                
+                let partnerCode = "";
+                if (urlCode.includes("PoS")) {
+                    partnerCode = urlCode.replace("PoS", "BoS");
+                } else if (urlCode.includes("BoS")) {
+                    partnerCode = urlCode.replace("BoS", "PoS");
+                }
+
+                const data = {
+                    code: urlCode,
+                    partnerCode: partnerCode, 
+                    message: "[시스템] 이메일 링크를 통한 메시지 열람 재접속",
+                    email: "auto_check@read.com",
+                    shareEmail: false
+                };
+
+                // 자동으로 시스템에 데이터를 물어봅니다.
+                fetch(webhookUrl, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(data)
+                })
+                .then(response => response.json())
+                .then(result => handleServerResponse(result))
+                .catch(error => handleCommunicationError(error));
+            }
+        });
+
         function goToNextStep() {
             const codeInput = document.getElementById('input-code').value.trim();
             
@@ -234,7 +278,6 @@
             document.getElementById('step-message').classList.remove('hidden');
         }
 
-        // 3. Submit 버튼 함수
         function submitData() {
             const codeInput = document.getElementById('input-code').value.trim();
             const messageInput = document.getElementById('input-message').value.trim();
@@ -246,21 +289,17 @@
                 return;
             }
 
-            const confirmMsg = `입력하신 이메일이 맞습니까?\nIs this the correct email?\n入力したメールアドレスは正しいですか？\n\n[ ${emailInput} ]\n\n확인(OK)을 누르시면 제출됩니다.`;
+            const confirmMsg = `입력하신 이메일이 맞습니까?\nIs this the correct email?\n\n[ ${emailInput} ]\n\n확인(OK)을 누르시면 제출됩니다.`;
             
             if(confirm(confirmMsg)) {
                 document.getElementById('step-message').classList.add('hidden');
 
-                // 짝꿍 코드 자동 생성
                 let partnerCode = "";
                 if (codeInput.includes("PoS")) {
                     partnerCode = codeInput.replace("PoS", "BoS");
                 } else if (codeInput.includes("BoS")) {
                     partnerCode = codeInput.replace("BoS", "PoS");
                 }
-
-                // 🚨 Make.com 웹훅 주소 (그대로 유지)
-                const webhookUrl = 'https://hook.eu1.make.com/k2hksgex8bb82cv7gi3h0klman1n7dt1';
 
                 const data = {
                     code: codeInput,
@@ -270,59 +309,55 @@
                     shareEmail: shareEmail
                 };
 
-                // Make.com으로 데이터 전송
                 fetch(webhookUrl, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify(data)
                 })
                 .then(response => response.json()) 
-                .then(result => {
-                    
-                    if (result.status === "success") {
-                        // 짝꿍이 쓴 글이 존재할 때
-                        document.getElementById('step-waiting').classList.add('hidden');
-                        document.getElementById('step-result').classList.remove('hidden');
-                        
-                        // 🌟 다국어 메시지 조합 로직
-                        let displayHtml = `<div class="msg-group">`;
-                        
-                        // 1. 원본 메시지 (가장 위에 크게)
-                        displayHtml += `<p class="text-main" style="font-size: 16px; font-weight: bold; margin-bottom: 12px;">${result.message}</p>`;
-
-                        // 2. 번역본 표시 ("SAME"이 아닌 경우에만 출력)
-                        if (result.message_en && result.message_en !== "SAME") {
-                            displayHtml += `<p class="text-en" style="margin-bottom: 8px; font-size: 14px; color: var(--text-sub);">( ${result.message_en} )</p>`;
-                        }
-                        if (result.message_jp && result.message_jp !== "SAME") {
-                            displayHtml += `<p class="text-jp" style="margin-bottom: 8px; font-size: 14px; color: var(--text-sub);">( ${result.message_jp} )</p>`;
-                        }
-                        if (result.message_kr && result.message_kr !== "SAME") {
-                            displayHtml += `<p class="text-kr" style="margin-bottom: 8px; font-size: 14px; color: var(--text-sub);">( ${result.message_kr} )</p>`;
-                        }
-                        
-                        displayHtml += `</div>`;
-                        
-                        document.getElementById('partner-message-display').innerHTML = displayHtml;
-
-                        // 이메일 공유 로직
-                        if(result.shareEmail === true || result.shareEmail === "true" || result.shareEmail === "TRUE") {
-                            document.getElementById('partner-email-display').innerHTML = `<p class='lang-en' style='color: var(--text-main); font-weight: bold;'>Partner's Email: ${result.email}</p>`;
-                        } else {
-                            document.getElementById('partner-email-display').innerHTML = `<p class='lang-en'>Partner chose not to share email.</p>`;
-                        }
-                        
-                    } else {
-                        // 짝꿍이 쓴 글이 아직 없을 때
-                        document.getElementById('step-waiting').classList.remove('hidden');
-                        document.getElementById('step-result').classList.add('hidden');
-                    }
-                })
-                .catch(error => {
-                    alert("통신 중 오류가 발생했습니다.");
-                    console.error('Error:', error);
-                });
+                .then(result => handleServerResponse(result))
+                .catch(error => handleCommunicationError(error));
             }
+        }
+
+        // 서버 응답 공통 처리 함수 (다국어 조합 및 이메일 하단 렌더링)
+        function handleServerResponse(result) {
+            if (result.status === "success") {
+                document.getElementById('step-waiting').classList.add('hidden');
+                document.getElementById('step-result').classList.remove('hidden');
+                
+                let displayHtml = `<div class="msg-group">`;
+                displayHtml += `<p class="text-main" style="font-size: 16px; font-weight: bold; margin-bottom: 12px; margin-top:0;">${result.message}</p>`;
+
+                if (result.message_en && result.message_en !== "SAME") {
+                    displayHtml += `<p class="text-en" style="margin-bottom: 8px; font-size: 14px; color: var(--text-sub);">( ${result.message_en} )</p>`;
+                }
+                if (result.message_jp && result.message_jp !== "SAME") {
+                    displayHtml += `<p class="text-jp" style="margin-bottom: 8px; font-size: 14px; color: var(--text-sub);">( ${result.message_jp} )</p>`;
+                }
+                if (result.message_kr && result.message_kr !== "SAME") {
+                    displayHtml += `<p class="text-kr" style="margin-bottom: 8px; font-size: 14px; color: var(--text-sub);">( ${result.message_kr} )</p>`;
+                }
+                displayHtml += `</div>`;
+                
+                document.getElementById('partner-message-display').innerHTML = displayHtml;
+
+                // 이메일 노출 여부 분기 및 스타일 바인딩
+                if(result.shareEmail === true || result.shareEmail === "true" || result.shareEmail === "TRUE") {
+                    document.getElementById('partner-email-display').innerHTML = `Partner's Email: ${result.email}`;
+                } else {
+                    document.getElementById('partner-email-display').innerHTML = `Partner chose not to share email.`;
+                }
+                
+            } else {
+                document.getElementById('step-waiting').classList.remove('hidden');
+                document.getElementById('step-result').classList.add('hidden');
+            }
+        }
+
+        function handleCommunicationError(error) {
+            alert("통신 중 오류가 발생했습니다.");
+            console.error('Error:', error);
         }
     </script>
 </body>
