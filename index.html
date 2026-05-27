@@ -209,14 +209,14 @@
     </div>
 
     <script>
-        // 1. 유효한 코드 목록 (방어 로직)
+        // 1. 유효한 코드 목록
         const validCodes = [
             'PoS1@p&b', 'BoS1@p&b',
             'PoS2@p&b', 'BoS2@p&b',
             'PoS3@p&b', 'BoS3@p&b'
         ];
 
-        // 2. Next 버튼을 눌렀을 때 작동하는 함수
+        // 2. Next 버튼 함수
         function goToNextStep() {
             const codeInput = document.getElementById('input-code').value.trim();
             
@@ -234,7 +234,7 @@
             document.getElementById('step-message').classList.remove('hidden');
         }
 
-        // 3. Submit 버튼을 눌렀을 때 작동하는 함수
+        // 3. Submit 버튼 함수
         function submitData() {
             const codeInput = document.getElementById('input-code').value.trim();
             const messageInput = document.getElementById('input-message').value.trim();
@@ -251,7 +251,7 @@
             if(confirm(confirmMsg)) {
                 document.getElementById('step-message').classList.add('hidden');
 
-                // 짝꿍 코드 생성
+                // 짝꿍 코드 자동 생성
                 let partnerCode = "";
                 if (codeInput.includes("PoS")) {
                     partnerCode = codeInput.replace("PoS", "BoS");
@@ -259,7 +259,7 @@
                     partnerCode = codeInput.replace("BoS", "PoS");
                 }
 
-                // Make.com 웹훅 주소
+                // 🚨 Make.com 웹훅 주소 (그대로 유지)
                 const webhookUrl = 'https://hook.eu1.make.com/k2hksgex8bb82cv7gi3h0klman1n7dt1';
 
                 const data = {
@@ -270,7 +270,7 @@
                     shareEmail: shareEmail
                 };
 
-                // Make.com으로 데이터 전송 및 진짜 응답(Response) 받기
+                // Make.com으로 데이터 전송
                 fetch(webhookUrl, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
@@ -284,14 +284,30 @@
                         document.getElementById('step-waiting').classList.add('hidden');
                         document.getElementById('step-result').classList.remove('hidden');
                         
-                        document.getElementById('partner-message-display').innerHTML = `
-                            <div class="msg-group">
-                                <p class="text-kr">${result.message}</p>
-                            </div>
-                        `;
+                        // 🌟 다국어 메시지 조합 로직
+                        let displayHtml = `<div class="msg-group">`;
+                        
+                        // 1. 원본 메시지 (가장 위에 크게)
+                        displayHtml += `<p class="text-main" style="font-size: 16px; font-weight: bold; margin-bottom: 12px;">${result.message}</p>`;
 
+                        // 2. 번역본 표시 ("SAME"이 아닌 경우에만 출력)
+                        if (result.message_en && result.message_en !== "SAME") {
+                            displayHtml += `<p class="text-en" style="margin-bottom: 8px; font-size: 14px; color: var(--text-sub);">( ${result.message_en} )</p>`;
+                        }
+                        if (result.message_jp && result.message_jp !== "SAME") {
+                            displayHtml += `<p class="text-jp" style="margin-bottom: 8px; font-size: 14px; color: var(--text-sub);">( ${result.message_jp} )</p>`;
+                        }
+                        if (result.message_kr && result.message_kr !== "SAME") {
+                            displayHtml += `<p class="text-kr" style="margin-bottom: 8px; font-size: 14px; color: var(--text-sub);">( ${result.message_kr} )</p>`;
+                        }
+                        
+                        displayHtml += `</div>`;
+                        
+                        document.getElementById('partner-message-display').innerHTML = displayHtml;
+
+                        // 이메일 공유 로직
                         if(result.shareEmail === true || result.shareEmail === "true" || result.shareEmail === "TRUE") {
-                            document.getElementById('partner-email-display').innerHTML = `<p class='lang-en'>Partner's Email: ${result.email}</p>`;
+                            document.getElementById('partner-email-display').innerHTML = `<p class='lang-en' style='color: var(--text-main); font-weight: bold;'>Partner's Email: ${result.email}</p>`;
                         } else {
                             document.getElementById('partner-email-display').innerHTML = `<p class='lang-en'>Partner chose not to share email.</p>`;
                         }
