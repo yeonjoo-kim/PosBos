@@ -4,185 +4,71 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Piece or Background</title>
-    <link rel="icon" type="image/png" href="./favicon.png">
-    <link rel="apple-touch-icon" href="./favicon.png">
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Dongle:wght@300;400&family=Dosis:wght@400;500&display=swap" rel="stylesheet">
     <style>
-        :root {
-            --bg-color: #E2FFDA;
-            --outline-color: #D9D9D9;
-            --sub-color: #D7FFF9;
-            --text-main: #222222;
-            --text-sub: #777777;
-            --border-width: 2pt;
-        }
-
-        body {
-            background-color: var(--bg-color);
-            font-family: 'Helvetica Neue', Helvetica, 'Noto Sans KR', 'Noto Sans JP', 'Noto Sans', sans-serif;
-            color: var(--text-main);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh;
-            margin: 0;
-            padding: 20px;
-            box-sizing: border-box;
-        }
-
-        .container {
-            width: 100%;
-            max-width: 480px;
-            display: flex;
-            flex-direction: column;
-            gap: 40px;
-        }
-
-        .main-logo {
-            width: 120px;
-            height: auto;
-            position: fixed;
-            top: 40px;
-            left: 50%;
-            transform: translateX(-50%);
-            pointer-events: none; 
-            z-index: 2; 
-        }
-        
-        .envelope-graphic {
-            width: 100%;
-            height: auto;
-            stroke: var(--outline-color);
-            stroke-width: var(--border-width);
-            fill: var(--bg-color);
-            position: relative;
-            z-index: 1;
-        }
-
-        #step-code, #step-message, #step-waiting, #step-result {
-            position: relative;
-            z-index: 3;
-        }
-
-        .instruction {
-            text-align: center;
-            margin-bottom: 24px;
-        }
-        
-        .instruction p {
-            margin: 4px 0;
-            line-height: 1.5;
-        }
-        
-        body, input, textarea, button {
-            font-family: 'Dosis', 'ヒラギノ丸ゴ Pro W4', 'Hiragino Maru Gothic Pro', 'Dongle', sans-serif;
-        }
-
-        .lang-kr { font-family: 'Dongle', sans-serif; font-size: 26px; font-weight: 400; line-height: 1.1; margin-bottom: -4px; }
-        .lang-en { font-family: 'Dosis', sans-serif; font-size: 16px; font-weight: 400; color: var(--text-sub); }
-        .lang-jp { font-family: 'ヒラギノ丸ゴ Pro W4', 'Hiragino Maru Gothic Pro', sans-serif; font-size: 11.5px; color: var(--text-sub); }
-
-        .text-main { font-family: 'Dosis', 'ヒラギノ丸ゴ Pro W4', 'Dongle', sans-serif; font-size: 20px; font-weight: 700; margin: 0 0 12px 0; }
-        .text-en { font-family: 'Dosis', sans-serif; font-size: 16px; font-weight: 500; color: var(--text-sub); margin: 0 0 8px 0; }
-        .text-jp { font-family: 'ヒラギノ丸ゴ Pro W4', 'Hiragino Maru Gothic Pro', sans-serif; font-size: 14px; font-weight: 400; color: var(--text-sub); margin: 0 0 8px 0; }
-        .text-kr { font-family: 'Dongle', sans-serif; font-size: 27px; font-weight: 300; line-height: 0.8; color: var(--text-sub); margin: 0 0 8px 0; }
-        
-        .form-group { margin-bottom: 20px; display: flex; flex-direction: column; gap: 8px; }
-        
-        input[type="text"], input[type="email"], textarea {
-            width: 100%;
-            padding: 16px;
-            background-color: transparent;
-            border: var(--border-width) solid var(--outline-color);
-            border-radius: 0;
-            font-family: inherit;
-            font-size: 16px;
-            box-sizing: border-box;
-            transition: background-color 0.3s ease;
-            resize: none;
-        }
-
-        input[type="text"]:focus, input[type="email"]:focus, textarea:focus {
-            outline: none;
-            background-color: var(--sub-color);
-        }
-
-        .checkbox-group {
-            margin-bottom: 20px;
-            display: flex;
-            align-items: flex-start;
-            gap: 12px;
-            cursor: pointer;
-            text-align: left;
-        }
-        
-        .checkbox-group input[type="checkbox"] {
-            width: 20px;
-            height: 20px;
-            margin: 2px 0 0 0;
-            cursor: pointer;
-            accent-color: var(--text-sub);
-            flex-shrink: 0;
-        }
-        
-        button {
-            width: 100%;
-            padding: 16px;
-            background-color: transparent;
-            border: var(--border-width) solid var(--outline-color);
-            color: var(--text-main);
-            font-size: 16px;
-            font-weight: bold;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            margin-top: 10px;
-        }
-
-        button:hover {
-            background-color: var(--outline-color);
-        }
-
-        .letter-paper {
-            background-color: #FFFFFF;
-            border: var(--border-width) solid var(--outline-color);
-            padding: 32px;
-            min-height: 220px;
-            line-height: 1.6;
-            font-size: 16px;
-            display: flex;
-            flex-direction: column;
-            justify-content: space-between;
-        }
-
+        :root { --bg-color: #E2FFDA; --outline-color: #D9D9D9; --border-width: 2pt; }
+        body { background-color: var(--bg-color); font-family: sans-serif; display: flex; justify-content: center; align-items: center; min-height: 100vh; margin: 0; padding: 20px; }
+        .container { width: 100%; max-width: 480px; }
         .hidden { display: none !important; }
+        input, textarea, button { width: 100%; padding: 16px; border: var(--border-width) solid var(--outline-color); margin-top: 10px; box-sizing: border-box; }
+        button { cursor: pointer; font-weight: bold; }
     </style>
 </head>
 <body>
 
     <div class="container">
-        <img src="./logo.png?v=2" alt="Piece or Background Logo" class="main-logo">
-        
-        <svg class="envelope-graphic" viewBox="0 0 400 240" xmlns="http://www.w3.org/2000/svg">
-            <rect x="2" y="2" width="396" height="236" />
-            <polyline points="2,2 200,140 398,2" fill="none" />
-            <polyline points="2,238 150,110" fill="none" />
-            <polyline points="398,238 250,110" fill="none" />
-        </svg>
-
         <div id="step-code">
-            <div class="instruction">
-                <p class="lang-kr">구매한 Piece or Background에 적힌 코드를 입력하세요.</p>
-                <p class="lang-en">Please enter the code written on your Piece or Background.</p>
-                <p class="lang-jp">ご購入いただいたPieceまたはBackgroundに記載されているコードを入力してください。</p>
-            </div>
-            <div class="form-group">
-                <input type="text" id="input-code" placeholder="Alphabet & Number Code" autocomplete="off">
-            </div>
+            <p>코드를 입력하세요.</p>
+            <input type="text" id="input-code" placeholder="Code">
             <button onclick="goToNextStep()">Next</button>
         </div>
 
         <div id="step-message" class="hidden">
-            <div class="instruction">
-                <p class="lang-kr">당신의 짝꿍에게 메세지를 남기
+            <p>메세지를 남기세요</p>
+            <textarea id="input-message" rows="4"></textarea>
+            <input type="email" id="input-email" placeholder="Email">
+            <button onclick="submitData()">Submit</button>
+        </div>
+
+        <div id="step-waiting" class="hidden">
+            <p>상대방의 메세지를 기다리는 중입니다.</p>
+        </div>
+    </div>
+
+    <script>
+        const validCodes = ['PoS1@p&b', 'BoS1@p&b', 'PoS2@p&b', 'BoS2@p&b', 'PoS3@p&b', 'BoS3@p&b', 'PoS4@p&b', 'BoS4@p&b', 'PoS5@p&b', 'BoS5@p&b', 'PoS6@p&b', 'BoS6@p&b', 'PoS7@p&b', 'BoS7@p&b', 'PoS8@p&b', 'BoS8@p&b', 'PoS9@p&b', 'BoS9@p&b', 'PoS10@p&b', 'BoS10@p&b'];
+        const webhookUrl = 'https://hook.eu1.make.com/k2hksgex8bb82cv7gi3h0klman1n7dt1';
+
+        // 1. Next 버튼 함수
+        function goToNextStep() {
+            const codeInput = document.getElementById('input-code').value.trim();
+            if (validCodes.includes(codeInput)) {
+                document.getElementById('step-code').classList.add('hidden');
+                document.getElementById('step-message').classList.remove('hidden');
+            } else {
+                alert("코드를 다시 확인해주세요.");
+            }
+        }
+
+        // 2. Submit 버튼 함수 (통신 오류 방지용 비동기 처리)
+        function submitData() {
+            const data = {
+                code: document.getElementById('input-code').value.trim(),
+                message: document.getElementById('input-message').value.trim(),
+                email: document.getElementById('input-email').value.trim()
+            };
+
+            // 즉시 화면 전환
+            document.getElementById('step-message').classList.add('hidden');
+            document.getElementById('step-waiting').classList.remove('hidden');
+
+            // 응답을 기다리지 않고 전송만 수행 (통신 오류 방지)
+            fetch(webhookUrl, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(data)
+            })
+            .catch(err => console.log("전송 시작"));
+        }
+    </script>
+</body>
+</html>
