@@ -43,10 +43,15 @@
         }
 
         .main-logo {
-            width: 120px; /* 로고의 가로 크기입니다. 필요에 따라 늘리거나 줄이세요. */
+            width: 120px;
             height: auto;
-            margin: 0 auto; /* 좌우 여백을 auto로 주어 완벽한 가운데 정렬을 만듭니다. */
-            display: block;
+            position: fixed; /* 부모 요소(컨테이너)의 제한을 벗어나 화면 전체를 씁니다 */
+            top: 40px; /* 초기 위치 (위쪽) */
+            left: 50%; /* 초기 위치 (가운데) */
+            transform: translateX(-50%);
+            transition: top 3s ease-in-out, left 3s ease-in-out; /* 3초 동안 아주 부드럽게 이동하는 효과 */
+            z-index: 100; /* 항상 최상단에 떠 있도록 설정 */
+            pointer-events: none; /* 💡 로고가 버튼이나 입력창 위를 지나갈 때도 클릭을 방해하지 않고 통과시킵니다 */
         }
         
         .envelope-graphic {
@@ -383,6 +388,32 @@
             alert("통신 중 오류가 발생했습니다.");
             console.error('Error:', error);
         }
+
+        // 🌟 1분(60초)마다 로고를 화면 내에서 랜덤하게 이동시키는 스크립트
+        function moveLogoRandomly() {
+            const logo = document.querySelector('.main-logo');
+            if (!logo) return;
+
+            // 브라우저 전체 화면 크기에서 로고 크기를 뺀 '안전 구역'을 계산합니다.
+            const maxX = window.innerWidth - logo.clientWidth;
+            const maxY = window.innerHeight - logo.clientHeight;
+
+            // 안전 구역 내에서 X, Y 좌표를 무작위로 뽑아냅니다.
+            const randomX = Math.floor(Math.random() * maxX);
+            const randomY = Math.floor(Math.random() * maxY);
+
+            // 초기 정중앙 세팅(transform)을 풀고, 새로운 랜덤 좌표로 위치를 이동시킵니다.
+            logo.style.transform = 'none';
+            logo.style.left = `${randomX}px`;
+            logo.style.top = `${randomY}px`;
+        }
+
+        // setInterval을 사용해 60000밀리초(1분)마다 정확히 함수를 반복 실행합니다.
+        setInterval(moveLogoRandomly, 2000);
+        
+        // (선택 사항) 만약 접속하자마자 1분을 기다리지 않고 2초 뒤에 첫 번째 이동을 시작하게 하고 싶다면 아래 주석(//)을 해제하세요.
+        // setTimeout(moveLogoRandomly, 2000);
+        
     </script>
 </body>
 </html>
