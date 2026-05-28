@@ -43,13 +43,12 @@
         }
 
         .main-logo {
-            width: 120px;
+            width: 100px;
             height: auto;
             position: fixed; /* 부모 요소(컨테이너)의 제한을 벗어나 화면 전체를 씁니다 */
             top: 40px; /* 초기 위치 (위쪽) */
             left: 50%; /* 초기 위치 (가운데) */
             transform: translateX(-50%);
-            transition: top 3s ease-in-out, left 3s ease-in-out; /* 3초 동안 아주 부드럽게 이동하는 효과 */
             z-index: 100; /* 항상 최상단에 떠 있도록 설정 */
             pointer-events: none; /* 💡 로고가 버튼이나 입력창 위를 지나갈 때도 클릭을 방해하지 않고 통과시킵니다 */
         }
@@ -170,7 +169,7 @@
 <body>
 
     <div class="container">
-        <img src="./logo.png" alt="Piece or Background Logo" class="main-logo">
+           <img src="./logo.png?v=2" alt="Piece or Background Logo" class="main-logo">
         <svg class="envelope-graphic" viewBox="0 0 400 240" xmlns="http://www.w3.org/2000/svg">
             <rect x="2" y="2" width="396" height="236" />
             <polyline points="2,2 200,140 398,2" fill="none" />
@@ -248,7 +247,14 @@
         const validCodes = [
             'PoS1@p&b', 'BoS1@p&b',
             'PoS2@p&b', 'BoS2@p&b',
-            'PoS3@p&b', 'BoS3@p&b'
+            'PoS3@p&b', 'BoS3@p&b',
+            'PoS4@p&b', 'BoS4@p&b',
+            'PoS5@p&b', 'BoS5@p&b',
+            'PoS6@p&b', 'BoS6@p&b',
+            'PoS7@p&b', 'BoS7@p&b',
+            'PoS8@p&b', 'BoS8@p&b',
+            'PoS9@p&b', 'BoS9@p&b',
+            'PoS10@p&b', 'BoS10@p&b'
         ];
 
         const webhookUrl = 'https://hook.eu1.make.com/k2hksgex8bb82cv7gi3h0klman1n7dt1';
