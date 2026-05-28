@@ -177,7 +177,7 @@
 
         <div id="step-message" class="hidden">
             <div class="instruction">
-                <p class="lang-kr">당신의 짝에게 메세지를 남기세요</p>
+                <p class="lang-kr">당신의 짝꿍에게 메세지를 남기세요</p>
                 <p class="lang-en">Message for your partner</p>
                 <p class="lang-jp">ペアに残したいメッセージ</p>
             </div>
@@ -210,7 +210,7 @@
             <div class="instruction" style="margin-top: 40px;">
                 <p class="lang-kr">아직 상대방이 메세지를 남기기 전입니다.<br>상대방이 메세지를 남겼을 경우 이메일이 전송이 됩니다.</p>
                 <p class="lang-en">Your partner hasn't left a message yet.<br>We will send you an email when they do.</p>
-                <p class="lang-jp">まだペアがメッセージを残していません。<br>メッセージが残された 경우、メールでお知らせします。</p>
+                <p class="lang-jp">まだペアがメッセージを残していません。<br>相手がメッセージを残した場合、メールでお知らせします。</p>
             </div>
         </div>
 
@@ -286,8 +286,7 @@
             }
 
             if(!validCodes.includes(codeInput)) {
-                alert("존재하지 않는 코드입니다. 오타가 없는지 확인해 주세요.\nInvalid code. Please check again.\n無効なコードです。もう一度確認してください。");
-                return;
+                alert("존재하지 않는 코드입니다. 오타가 없는지 확인해 주세요.\nInvalid code. Please check again.\n存在しないコードです。入力ミスがないかご確認ください。");
             }
             
             document.getElementById('step-code').classList.add('hidden');
@@ -306,7 +305,7 @@
             }
 
             // 🌟 질문 2 해결: 영문 및 일문 번역이 완벽하게 추가된 알림창 세팅
-            const confirmMsg = `입력하신 이메일이 맞습니까?\nIs this the correct email?\n入力한 メールアドレスは正しいですか？\n\n[ ${emailInput} ]\n\n확인(OK)을 누르시면 제출됩니다.\nClick OK to submit.\nOKをクリックすると送信されます。`;
+            const confirmMsg = `입력하신 이메일이 맞습니까?\nIs this the correct email?\n入力したメールアドレスは正しいですか？\n\n[ ${emailInput} ]\n\n확인(OK)을 누르시면 제출됩니다.\nClick OK to submit.\nOKをクリックすると送信されます。`;
             
             if(confirm(confirmMsg)) {
                 document.getElementById('step-message').classList.add('hidden');
