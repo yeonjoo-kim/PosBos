@@ -114,3 +114,304 @@
         input[type="text"]:focus, input[type="email"]:focus, textarea:focus {
             outline: none;
             background-color: var(--sub-color);
+        }
+
+        .checkbox-group {
+            margin-bottom: 20px;
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            cursor: pointer;
+            text-align: left;
+        }
+        
+        .checkbox-group input[type="checkbox"] {
+            width: 20px;
+            height: 20px;
+            margin: 2px 0 0 0;
+            cursor: pointer;
+            accent-color: var(--text-sub);
+            flex-shrink: 0;
+        }
+        
+        .checkbox-text p {
+            margin: 0 0 4px 0;
+        }
+
+        button {
+            width: 100%;
+            padding: 16px;
+            background-color: transparent;
+            border: var(--border-width) solid var(--outline-color);
+            color: var(--text-main);
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-top: 10px;
+        }
+
+        button:hover {
+            background-color: var(--outline-color);
+        }
+
+        .letter-paper {
+            background-color: #FFFFFF;
+            border: var(--border-width) solid var(--outline-color);
+            padding: 32px;
+            min-height: 220px;
+            line-height: 1.6;
+            font-size: 16px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        .hidden { display: none !important; }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <img src="./logo.png?v=2" alt="Piece or Background Logo" class="main-logo">
+        
+        <svg class="envelope-graphic" viewBox="0 0 400 240" xmlns="http://www.w3.org/2000/svg">
+            <rect x="2" y="2" width="396" height="236" />
+            <polyline points="2,2 200,140 398,2" fill="none" />
+            <polyline points="2,238 150,110" fill="none" />
+            <polyline points="398,238 250,110" fill="none" />
+        </svg>
+
+        <div id="step-code">
+            <div class="instruction">
+                <p class="lang-kr">구매한 Piece or Background에 적힌 코드를 입력하세요.</p>
+                <p class="lang-en">Please enter the code written on your Piece or Background.</p>
+                <p class="lang-jp">ご購入いただいたPieceまたはBackgroundに記載されているコードを入力してください。</p>
+            </div>
+            <div class="form-group">
+                <input type="text" id="input-code" placeholder="English Code with Alphabet&Number" autocomplete="off">
+            </div>
+            <button onclick="goToNextStep()">Next</button>
+        </div>
+
+        <div id="step-message" class="hidden">
+            <div class="instruction">
+                <p class="lang-kr">당신의 짝꿍에게 메세지를 남기세요</p>
+                <p class="lang-en">Message for your partner</p>
+                <p class="lang-jp">ペアに残したいメッセージ</p>
+            </div>
+            <div class="form-group">
+                <textarea id="input-message" rows="4" placeholder="Your message..."></textarea>
+            </div>
+
+            <div class="instruction" style="margin-top: 30px;">
+                <p class="lang-kr">이메일</p>
+                <p class="lang-en">Email</p>
+                <p class="lang-jp">メールアドレス</p>
+            </div>
+            <div class="form-group">
+                <input type="email" id="input-email" placeholder="Email address">
+            </div>
+            
+            <label class="checkbox-group">
+                <input type="checkbox" id="check-share-email">
+                <div class="checkbox-text">
+                    <p class="lang-kr">메세지와 함께 이메일 정보를 주겠습니까?</p>
+                    <p class="lang-en">Would you like to share your email with the message?</p>
+                    <p class="lang-jp">メッセージと一緒にメールアドレスを共有しますか？</p>
+                </div>
+            </label>
+            
+            <button onclick="submitData()">Submit</button>
+        </div>
+
+        <div id="step-waiting" class="hidden">
+            <div class="instruction" style="margin-top: 40px;">
+                <p class="lang-kr">아직 상대방이 메세지를 남기기 전입니다.<br>상대방이 메세지를 남겼을 경우 이메일이 전송이 됩니다.</p>
+                <p class="lang-en">Your partner hasn't left a message yet.<br>We will send you an email when they do.</p>
+                <p class="lang-jp">まだペアがメッセージを残していません。<br>相手がメッセージを残した場合、メールでお知らせします。</p>
+            </div>
+        </div>
+
+        <div id="step-result" class="hidden">
+            <div class="instruction">
+                <p class="lang-kr">당신의 짝꿍이 남긴 메세지입니다.</p>
+                <p class="lang-en">A message from your partner.</p>
+                <p class="lang-jp">ペアからのメッセージです。</p>
+            </div>
+            
+            <div class="letter-paper">
+                <div id="partner-message-display"></div>
+                <div id="partner-email-display" style="margin-top: 32px; text-align: center; font-size: 14px; color: var(--text-sub);"></div>
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+        const validCodes = [
+            'PoS1@p&b', 'BoS1@p&b',
+            'PoS2@p&b', 'BoS2@p&b',
+            'PoS3@p&b', 'BoS3@p&b',
+            'PoS4@p&b', 'BoS4@p&b',
+            'PoS5@p&b', 'BoS5@p&b',
+            'PoS6@p&b', 'BoS6@p&b',
+            'PoS7@p&b', 'BoS7@p&b',
+            'PoS8@p&b', 'BoS8@p&b',
+            'PoS9@p&b', 'BoS9@p&b',
+            'PoS10@p&b', 'BoS10@p&b'
+        ];
+
+        const webhookUrl = 'https://hook.eu1.make.com/k2hksgex8bb82cv7gi3h0klman1n7dt1';
+
+        window.addEventListener('DOMContentLoaded', () => {
+            const currentUrl = decodeURIComponent(window.location.href);
+            const urlCode = validCodes.find(code => currentUrl.includes(code));
+            
+            if (urlCode) {
+                document.getElementById('step-code').classList.add('hidden');
+                document.getElementById('step-waiting').classList.remove('hidden');
+                
+                let partnerCode = "";
+                if (urlCode.includes("PoS")) {
+                    partnerCode = urlCode.replace("PoS", "BoS");
+                } else if (urlCode.includes("BoS")) {
+                    partnerCode = urlCode.replace("BoS", "PoS");
+                }
+
+                const data = {
+                    code: urlCode,
+                    partnerCode: partnerCode, 
+                    message: "[시스템] 링크 조회", 
+                    email: "auto_check@read.com",
+                    shareEmail: false
+                };
+
+                fetch(webhookUrl, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(data)
+                })
+                .then(response => response.json())
+                .then(result => handleServerResponse(result))
+                .catch(error => handleCommunicationError(error));
+            }
+        });
+
+        function goToNextStep() {
+            const codeInput = document.getElementById('input-code').value.trim();
+            
+            if(!codeInput) {
+                alert("코드를 입력해 주세요.\nPlease enter the code.\nコードを入力してください。");
+                return;
+            }
+
+            if(!validCodes.includes(codeInput)) {
+                alert("존재하지 않는 코드입니다. 오타가 없는지 확인해 주세요.\nInvalid code. Please check again.\n存在しないコードです。入力ミスがないかご確認ください。");
+                return;
+            }
+            
+            document.getElementById('step-code').classList.add('hidden');
+            document.getElementById('step-message').classList.remove('hidden');
+        }
+
+        function submitData() {
+            const codeInput = document.getElementById('input-code').value.trim();
+            const messageInput = document.getElementById('input-message').value.trim();
+            const emailInput = document.getElementById('input-email').value.trim();
+            const shareEmail = document.getElementById('check-share-email').checked;
+
+            if(!messageInput || !emailInput) {
+                alert("메시지와 이메일은 필수 입력 사항입니다.");
+                return;
+            }
+
+            const confirmMsg = `입력하신 이메일이 맞습니까?\nIs this the correct email?\n入力したメールアドレスは正しいですか？\n\n[ ${emailInput} ]\n\n확인(OK)을 누르시면 제출됩니다.\nClick OK to submit.\nOKをクリックすると送信されます。`;
+            
+            if(confirm(confirmMsg)) {
+                document.getElementById('step-message').classList.add('hidden');
+
+                let partnerCode = "";
+                if (codeInput.includes("PoS")) {
+                    partnerCode = codeInput.replace("PoS", "BoS");
+                } else if (codeInput.includes("BoS")) {
+                    partnerCode = codeInput.replace("BoS", "PoS");
+                }
+
+                const data = {
+                    code: codeInput,
+                    partnerCode: partnerCode, 
+                    message: messageInput,
+                    email: emailInput,
+                    shareEmail: shareEmail
+                };
+
+                fetch(webhookUrl, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(data)
+                })
+                .then(response => response.json()) 
+                .then(result => handleServerResponse(result))
+                .catch(error => handleCommunicationError(error));
+            }
+        }
+
+        function handleServerResponse(result) {
+            if (result.status === "success") {
+                document.getElementById('step-waiting').classList.add('hidden');
+                document.getElementById('step-result').classList.remove('hidden');
+                
+                let displayHtml = `<div class="msg-group">`;
+                displayHtml += `<p class="text-main" style="font-size: 16px; font-weight: bold; margin-bottom: 12px; margin-top:0;">${result.message}</p>`;
+
+                if (result.message_en && result.message_en !== "SAME") {
+                    displayHtml += `<p class="text-en" style="margin-bottom: 8px; font-size: 14px; color: var(--text-sub);">( ${result.message_en} )</p>`;
+                }
+                if (result.message_jp && result.message_jp !== "SAME") {
+                    displayHtml += `<p class="text-jp" style="margin-bottom: 8px; font-size: 14px; color: var(--text-sub);">( ${result.message_jp} )</p>`;
+                }
+                if (result.message_kr && result.message_kr !== "SAME") {
+                    displayHtml += `<p class="text-kr" style="margin-bottom: 8px; font-size: 14px; color: var(--text-sub);">( ${result.message_kr} )</p>`;
+                }
+                displayHtml += `</div>`;
+                
+                document.getElementById('partner-message-display').innerHTML = displayHtml;
+
+                if(result.shareEmail === true || result.shareEmail === "true" || result.shareEmail === "TRUE") {
+                    document.getElementById('partner-email-display').innerHTML = `Partner's Email: ${result.email}`;
+                } else {
+                    document.getElementById('partner-email-display').innerHTML = `Partner chose not to share email.`;
+                }
+                
+            } else {
+                document.getElementById('step-waiting').classList.remove('hidden');
+                document.getElementById('step-result').classList.add('hidden');
+            }
+        }
+
+        function handleCommunicationError(error) {
+            alert("통신 중 오류가 발생했습니다.");
+            console.error('Error:', error);
+        }
+
+        function moveLogoRandomly() {
+            const logo = document.querySelector('.main-logo');
+            if (!logo) return;
+
+            const maxX = window.innerWidth - logo.clientWidth;
+            const maxY = window.innerHeight - logo.clientHeight;
+
+            const randomX = Math.floor(Math.random() * maxX);
+            const randomY = Math.floor(Math.random() * maxY);
+
+            logo.style.transform = 'none';
+            logo.style.left = `${randomX}px`;
+            logo.style.top = `${randomY}px`;
+        }
+
+        setInterval(moveLogoRandomly, 2000);
+        
+    </script>
+</body>
+</html>
