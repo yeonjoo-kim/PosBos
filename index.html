@@ -43,14 +43,15 @@
         }
 
         .main-logo {
-            width: 130px;
+            width: 120px;
             height: auto;
-            position: fixed; /* 부모 요소(컨테이너)의 제한을 벗어나 화면 전체를 씁니다 */
-            top: 40px; /* 초기 위치 (위쪽) */
-            left: 50%; /* 초기 위치 (가운데) */
+            position: fixed;
+            top: 40px;
+            left: 50%;
             transform: translateX(-50%);
-            z-index: -1;
-            pointer-events: none; /* 💡 로고가 버튼이나 입력창 위를 지나갈 때도 클릭을 방해하지 않고 통과시킵니다 */
+            pointer-events: none; 
+            /* 🌟 아래 한 줄 수정: 로고를 2층으로 설정합니다 */
+            z-index: 2; 
         }
         
         .envelope-graphic {
@@ -59,6 +60,9 @@
             stroke: var(--outline-color);
             stroke-width: var(--border-width);
             fill: var(--bg-color);
+            /* 🌟 아래 두 줄 추가: 편지지를 1층 바닥으로 설정합니다 */
+            position: relative;
+            z-index: 1;
         }
 
         .instruction {
@@ -420,6 +424,11 @@
         // (선택 사항) 만약 접속하자마자 1분을 기다리지 않고 2초 뒤에 첫 번째 이동을 시작하게 하고 싶다면 아래 주석(//)을 해제하세요.
         // setTimeout(moveLogoRandomly, 2000);
         
+        /* 🌟 새로 추가: 모든 텍스트와 입력창 구역을 가장 높은 3층으로 설정합니다 */
+        #step-code, #step-message, #step-waiting, #step-result {
+            position: relative;
+            z-index: 3;
+        }
     </script>
 </body>
 </html>
